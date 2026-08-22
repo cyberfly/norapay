@@ -64,3 +64,72 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+.rich-text {
+    @apply space-y-3 text-sm text-zinc-700 dark:text-zinc-300;
+}
+
+.rich-text :is(h2, h3) {
+    @apply font-semibold text-zinc-900 dark:text-white;
+}
+
+.rich-text h2 {
+    @apply text-lg;
+}
+
+.rich-text h3 {
+    @apply text-base;
+}
+
+.rich-text :is(ul, ol) {
+    @apply ms-5 space-y-1;
+}
+
+.rich-text ul {
+    @apply list-disc;
+}
+
+.rich-text ol {
+    @apply list-decimal;
+}
+
+.rich-text blockquote {
+    @apply border-s-2 border-zinc-300 ps-3 italic text-zinc-600 dark:border-zinc-600 dark:text-zinc-400;
+}
+
+.rich-text strong {
+    @apply font-semibold;
+}
+
+.rich-text .ProseMirror {
+    @apply min-h-32 rounded-b-lg px-3 py-2 outline-hidden;
+}
+
+/**
+ * A perforated "tear-off slip" seam: a dashed rule with two punched
+ * notches, echoing a COD order stub. --seam-bg sets the notch fill to
+ * match whatever surface sits behind the card (defaults to zinc-50).
+ */
+.ticket-seam {
+    position: relative;
+    border-top: 2px dashed var(--color-zinc-300);
+}
+
+.ticket-seam::before,
+.ticket-seam::after {
+    content: '';
+    position: absolute;
+    top: -9px;
+    inline-size: 18px;
+    block-size: 18px;
+    border-radius: 9999px;
+    background: var(--seam-bg, var(--color-zinc-50));
+}
+
+.ticket-seam::before {
+    inset-inline-start: -9px;
+}
+
+.ticket-seam::after {
+    inset-inline-end: -9px;
+}

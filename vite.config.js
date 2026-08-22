@@ -12,6 +12,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/passkeys.js',
+                'resources/js/tiptap-editor.js',
+                'resources/js/sales-chart.js',
             ],
             refresh: true,
             fonts: [
@@ -23,6 +25,7 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        host: '127.0.0.1',
         cors: true,
         watch: {
             ignored: [
