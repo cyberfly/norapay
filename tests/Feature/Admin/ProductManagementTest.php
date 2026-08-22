@@ -10,8 +10,28 @@ test('guests are redirected away from the products index', function () {
     $this->get(route('admin.products.index'))->assertRedirect(route('login'));
 });
 
-test('authenticated user can view the products index', function () {
+test('non-admin users cannot view the products index', function () {
     $this->actingAs(User::factory()->create());
+
+    $this->get(route('admin.products.index'))->assertForbidden();
+});
+
+test('non-admin users cannot open the products index component', function () {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test('pages::admin.products.index')->assertForbidden();
+});
+
+test('non-admin users cannot open the product form modal', function () {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test('pages::admin.products.form-modal')->assertForbidden();
+
+    expect(Product::count())->toBe(0);
+});
+
+test('admin can view the products index', function () {
+    $this->actingAs(User::factory()->admin()->create());
 
     $product = Product::factory()->create();
 
@@ -20,8 +40,8 @@ test('authenticated user can view the products index', function () {
         ->assertSee($product->name);
 });
 
-test('authenticated user can create a product', function () {
-    $this->actingAs(User::factory()->create());
+test('admin can create a product', function () {
+    $this->actingAs(User::factory()->admin()->create());
 
     Livewire::test('pages::admin.products.form-modal')
         ->call('openForCreate')
@@ -38,8 +58,8 @@ test('authenticated user can create a product', function () {
     expect($product->is_active)->toBeTrue();
 });
 
-test('authenticated user can edit a product', function () {
-    $this->actingAs(User::factory()->create());
+test('admin can edit a product', function () {
+    $this->actingAs(User::factory()->admin()->create());
 
     $product = Product::factory()->create(['name' => 'Old Name']);
 
@@ -52,10 +72,10 @@ test('authenticated user can edit a product', function () {
     expect($product->fresh()->name)->toBe('Updated Name');
 });
 
-test('authenticated user can upload a featured image for a product', function () {
+test('admin can upload a featured image for a product', function () {
     Storage::fake('public');
 
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     Livewire::test('pages::admin.products.form-modal')
         ->call('openForCreate')
@@ -71,10 +91,10 @@ test('authenticated user can upload a featured image for a product', function ()
     Storage::disk('public')->assertExists($product->image);
 });
 
-test('authenticated user can remove an existing featured image', function () {
+test('admin can remove an existing featured image', function () {
     Storage::fake('public');
 
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $product = Product::factory()->create(['image' => 'products/existing.jpg']);
     Storage::disk('public')->put('products/existing.jpg', 'fake-contents');
@@ -89,8 +109,8 @@ test('authenticated user can remove an existing featured image', function () {
     Storage::disk('public')->assertMissing('products/existing.jpg');
 });
 
-test('authenticated user can search products by name', function () {
-    $this->actingAs(User::factory()->create());
+test('admin can search products by name', function () {
+    $this->actingAs(User::factory()->admin()->create());
 
     $match = Product::factory()->create(['name' => 'Wireless Mouse']);
     $other = Product::factory()->create(['name' => 'Keyboard']);
@@ -101,8 +121,8 @@ test('authenticated user can search products by name', function () {
         ->assertDontSee($other->name);
 });
 
-test('authenticated user can deactivate a product', function () {
-    $this->actingAs(User::factory()->create());
+test('admin can deactivate a product', function () {
+    $this->actingAs(User::factory()->admin()->create());
 
     $product = Product::factory()->create(['is_active' => true]);
 

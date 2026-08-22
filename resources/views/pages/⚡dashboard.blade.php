@@ -3,6 +3,7 @@
 use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Product;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -11,6 +12,11 @@ new class extends Component
 {
     #[Url]
     public int $period = 30;
+
+    public function mount(): void
+    {
+        Gate::authorize('access-admin');
+    }
 
     /**
      * @return array{revenue: string, orders: int, pendingOrders: int, activeProducts: int}

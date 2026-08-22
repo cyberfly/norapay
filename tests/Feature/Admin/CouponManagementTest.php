@@ -10,7 +10,7 @@ test('guests are redirected away from the coupons index', function () {
 });
 
 test('authenticated user can view the coupons index', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $coupon = Coupon::factory()->create();
 
@@ -20,7 +20,7 @@ test('authenticated user can view the coupons index', function () {
 });
 
 test('authenticated user can create a fixed coupon', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     Livewire::test('pages::admin.coupons.form-modal')
         ->call('openForCreate')
@@ -40,7 +40,7 @@ test('authenticated user can create a fixed coupon', function () {
 });
 
 test('authenticated user can create a percentage coupon with a usage limit', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     Livewire::test('pages::admin.coupons.form-modal')
         ->call('openForCreate')
@@ -59,7 +59,7 @@ test('authenticated user can create a percentage coupon with a usage limit', fun
 });
 
 test('percentage coupon value cannot exceed 100', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     Livewire::test('pages::admin.coupons.form-modal')
         ->call('openForCreate')
@@ -73,7 +73,7 @@ test('percentage coupon value cannot exceed 100', function () {
 });
 
 test('duplicate coupon codes are rejected', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     Coupon::factory()->create(['code' => 'DUPE']);
 
@@ -88,7 +88,7 @@ test('duplicate coupon codes are rejected', function () {
 });
 
 test('authenticated user can edit a coupon', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $coupon = Coupon::factory()->create(['code' => 'OLDCODE']);
 
@@ -102,7 +102,7 @@ test('authenticated user can edit a coupon', function () {
 });
 
 test('authenticated user can search coupons by code', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $match = Coupon::factory()->create(['code' => 'SUMMER25']);
     $other = Coupon::factory()->create(['code' => 'WINTER10']);
@@ -114,7 +114,7 @@ test('authenticated user can search coupons by code', function () {
 });
 
 test('authenticated user can deactivate a coupon', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $coupon = Coupon::factory()->create(['is_active' => true]);
 

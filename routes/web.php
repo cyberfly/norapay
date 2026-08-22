@@ -14,7 +14,7 @@ Route::livewire('payments/{booking:booking_number}/failed', 'pages::payments.fai
     ->middleware('signed')
     ->name('payments.failed');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
     Route::livewire('dashboard', 'pages::dashboard')->name('dashboard');
 });
 

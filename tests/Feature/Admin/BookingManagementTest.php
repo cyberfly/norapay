@@ -11,7 +11,7 @@ test('guests are redirected away from the bookings index', function () {
 });
 
 test('authenticated user can view the bookings index', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $booking = Booking::factory()->create();
 
@@ -21,7 +21,7 @@ test('authenticated user can view the bookings index', function () {
 });
 
 test('authenticated user can view a booking detail page', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $booking = Booking::factory()->create();
 
@@ -31,7 +31,7 @@ test('authenticated user can view a booking detail page', function () {
 });
 
 test('authenticated user can search bookings', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $matching = Booking::factory()->create(['customer_name' => 'Ali Bin Abu']);
     $other = Booking::factory()->create(['customer_name' => 'Siti Zainab']);
@@ -43,7 +43,7 @@ test('authenticated user can search bookings', function () {
 });
 
 test('authenticated user can update a booking status', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $booking = Booking::factory()->create(['status' => BookingStatus::Pending]);
 
@@ -56,7 +56,7 @@ test('authenticated user can update a booking status', function () {
 });
 
 test('the booking detail page shows payment history', function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     $booking = Booking::factory()->create();
     $payment = Payment::factory()->for($booking)->paid()->create(['xendit_invoice_id' => 'inv_abc123']);

@@ -30,9 +30,15 @@
                     </a>
 
                     @auth
-                        <flux:button href="{{ route('dashboard') }}" wire:navigate variant="primary" size="sm">
-                            {{ __('Papan pemuka') }}
-                        </flux:button>
+                        @if (auth()->user()->is_admin)
+                            <flux:button href="{{ route('dashboard') }}" wire:navigate variant="primary" size="sm">
+                                {{ __('Papan pemuka') }}
+                            </flux:button>
+                        @else
+                            <flux:button href="{{ route('profile.edit') }}" wire:navigate variant="primary" size="sm">
+                                {{ __('Akaun saya') }}
+                            </flux:button>
+                        @endif
                     @else
                         @if (Route::has('login'))
                             <flux:button href="{{ route('login') }}" wire:navigate variant="ghost" size="sm" class="hidden sm:inline-flex">

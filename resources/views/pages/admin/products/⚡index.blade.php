@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -13,6 +14,11 @@ new class extends Component
 
     #[Url]
     public string $search = '';
+
+    public function mount(): void
+    {
+        Gate::authorize('access-admin');
+    }
 
     #[Computed]
     public function products()

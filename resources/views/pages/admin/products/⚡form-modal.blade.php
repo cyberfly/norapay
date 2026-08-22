@@ -3,6 +3,7 @@
 use App\Models\Product;
 use Flux\Flux;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
@@ -38,6 +39,11 @@ new class extends Component
      * Bumped every time the modal opens, so the rich text editor remounts with fresh content.
      */
     public int $formVersion = 0;
+
+    public function mount(): void
+    {
+        Gate::authorize('access-admin');
+    }
 
     #[On('create-product')]
     public function openForCreate(): void

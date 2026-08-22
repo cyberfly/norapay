@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'can:access-admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('products', 'pages::admin.products.index')->name('products.index');
 
     Route::livewire('coupons', 'pages::admin.coupons.index')->name('coupons.index');
