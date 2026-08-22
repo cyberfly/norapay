@@ -13,7 +13,7 @@ new class extends Component
 
     public function mount(Booking $booking): void
     {
-        $this->booking = $booking;
+        $this->booking = $booking->load('payments');
         $this->status = $booking->status->value;
     }
 
@@ -70,6 +70,35 @@ new class extends Component
             </div>
         @endif
     </div>
+
+    @if ($booking->payments->isNotEmpty())
+        <div class="rounded-xl border border-neutral-200 p-6 dark:border-neutral-700">
+            <flux:heading size="sm">{{ __('Payments') }}</flux:heading>
+
+            <div class="mt-3 space-y-3">
+                @foreach ($booking->payments->sortByDesc('created_at') as $payment)
+                    <div class="flex items-center justify-between gap-4 text-sm">
+                        <div>
+                            <flux:badge :color="$payment->status->color()">{{ $payment->status->label() }}</flux:badge>
+                            @if ($payment->payment_method)
+                                <flux:text class="inline">{{ $payment->payment_method }}</flux:text>
+                            @endif
+                        </div>
+
+                        <div class="text-right">
+                            <flux:text>{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</flux:text>
+                            @if ($payment->paid_at)
+                                <flux:text class="block text-xs text-zinc-400">{{ __('Paid') }}: {{ $payment->paid_at->format('d M Y H:i') }}</flux:text>
+                            @endif
+                            @if ($payment->xendit_invoice_id)
+                                <flux:text class="block font-mono text-xs text-zinc-400">{{ $payment->xendit_invoice_id }}</flux:text>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
     <form wire:submit="updateStatus" class="flex items-end gap-4">
         <flux:select wire:model="status" :label="__('Status')" class="max-w-xs">

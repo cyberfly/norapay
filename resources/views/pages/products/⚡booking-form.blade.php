@@ -1,7 +1,9 @@
 <?php
 
 use App\Concerns\BookingValidationRules;
+use App\Concerns\InitiatesXenditPayment;
 use App\Enums\BookingStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Booking;
 use App\Models\Coupon;
 use App\Models\Product;
@@ -13,6 +15,7 @@ use Livewire\Component;
 new class extends Component
 {
     use BookingValidationRules;
+    use InitiatesXenditPayment;
 
     public Product $product;
 
@@ -41,6 +44,8 @@ new class extends Component
     public bool $submitted = false;
 
     public ?string $bookingNumber = null;
+
+    public ?Booking $booking = null;
 
     public function mount(Product $product): void
     {
@@ -149,10 +154,20 @@ new class extends Component
 
         $this->reset(['customer_name', 'customer_phone', 'customer_email', 'customer_address', 'quantity', 'notes', 'couponCode', 'discountAmount', 'couponMessage', 'couponMessageType']);
         $this->quantity = 1;
+        $this->booking = $booking;
         $this->bookingNumber = $booking->booking_number;
         $this->submitted = true;
 
-        Flux::toast(variant: 'success', text: __('Booking received. We will contact you shortly.'));
+        $this->initiatePayment($booking);
+    }
+
+    public function retryPayment(): void
+    {
+        if (! $this->booking) {
+            return;
+        }
+
+        $this->initiatePayment($this->booking->fresh());
     }
 }; ?>
 
@@ -171,11 +186,20 @@ new class extends Component
                 <span class="font-mono text-sm font-semibold text-zinc-900">{{ $bookingNumber }}</span>
             </div>
 
-            <div>
-                <flux:button variant="ghost" wire:click="$set('submitted', false)" class="mt-2">
-                    {{ __('Buat tempahan lain') }}
-                </flux:button>
-            </div>
+            @if ($booking?->latestPayment?->status === PaymentStatus::Failed)
+                <div class="space-y-2">
+                    <flux:text class="text-red-600">{{ __('Pembayaran tidak dapat dimulakan.') }}</flux:text>
+                    <flux:button variant="primary" wire:click="retryPayment">
+                        {{ __('Cuba bayar semula') }}
+                    </flux:button>
+                </div>
+            @else
+                <div>
+                    <flux:button variant="ghost" wire:click="$set('submitted', false)" class="mt-2">
+                        {{ __('Buat tempahan lain') }}
+                    </flux:button>
+                </div>
+            @endif
         </div>
     @else
         <div class="mb-5">
@@ -188,7 +212,7 @@ new class extends Component
 
             <flux:input wire:model="customer_phone" :label="__('Nombor telefon')" type="tel" required autocomplete="tel" />
 
-            <flux:input wire:model="customer_email" :label="__('Emel (pilihan)')" type="email" autocomplete="email" />
+            <flux:input wire:model="customer_email" :label="__('Emel')" type="email" required autocomplete="email" />
 
             <flux:textarea wire:model="customer_address" :label="__('Alamat penghantaran (pilihan)')" rows="3" />
 
@@ -240,7 +264,7 @@ new class extends Component
             </flux:button>
 
             <flux:text size="sm" class="text-center text-zinc-400">
-                {{ __('Tiada bayaran diperlukan sekarang — bayar semasa terima.') }}
+                {{ __('Anda akan diarahkan ke halaman pembayaran selamat Xendit.') }}
             </flux:text>
         </form>
     @endif

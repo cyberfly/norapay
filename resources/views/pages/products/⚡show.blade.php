@@ -30,11 +30,6 @@ new #[Layout('layouts::public')] class extends Component
                     <x-placeholder-pattern class="absolute inset-0 size-full stroke-zinc-900/10" />
                 </div>
             @endif
-
-            <span class="absolute start-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-xs font-medium tracking-wide text-zinc-600 shadow-sm">
-                <flux:icon name="truck" class="size-3.5 text-emerald-600" />
-                {{ __('Bayar semasa terima (COD)') }}
-            </span>
         </div>
 
         <div class="flex flex-col p-6 sm:p-10">

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Xendit\XenditClient;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(XenditClient::class, fn (): XenditClient => new XenditClient(
+            secretKey: (string) config('services.xendit.secret_key'),
+            callbackVerificationToken: (string) config('services.xendit.callback_verification_token'),
+            currency: (string) config('services.xendit.currency'),
+            invoiceDuration: (int) config('services.xendit.invoice_duration'),
+        ));
     }
 
     /**

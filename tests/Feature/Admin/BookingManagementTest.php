@@ -2,6 +2,7 @@
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\Payment;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -52,4 +53,16 @@ test('authenticated user can update a booking status', function () {
         ->assertHasNoErrors();
 
     expect($booking->fresh()->status)->toBe(BookingStatus::Confirmed);
+});
+
+test('the booking detail page shows payment history', function () {
+    $this->actingAs(User::factory()->create());
+
+    $booking = Booking::factory()->create();
+    $payment = Payment::factory()->for($booking)->paid()->create(['xendit_invoice_id' => 'inv_abc123']);
+
+    $this->get(route('admin.bookings.show', $booking))
+        ->assertOk()
+        ->assertSee($payment->payment_method)
+        ->assertSee('inv_abc123');
 });
